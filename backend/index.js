@@ -12,15 +12,19 @@ dotenv.config();
 
 conectarDB();
 
-const dominiosPermitidos = [process.env.FRONTEND_URL];
+// Permitir múltiples orígenes separados por coma, y sin origen (Postman)
+const dominiosPermitidos = (process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((d) => d.trim())
+  .filter(Boolean)
 
 const corsOptions = {
   origin: function (origin, callback) {
+    if (!origin) return callback(null, true)
     if (dominiosPermitidos.indexOf(origin) !== -1) {
-      // El Origen del Request esta permitido
-      callback(null, true);
+      callback(null, true)
     } else {
-      callback(new Error("No permitido por CORS"));
+      callback(new Error("No permitido por CORS"))
     }
   },
 };
